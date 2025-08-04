@@ -50,6 +50,4 @@ describe('BreakdownResult', () => {
     { denomination: 2, count: 3 }
   ]);
 });
-
- 
 });

@@ -29,26 +29,22 @@ describe('CalculatorForm', () => {
   fixture.detectChanges();
 
   // Trigger change detection after setting inputs
-  await fixture.whenStable(); // Ensures ngModel is updated
+  await fixture.whenStable(); 
 
   spyOn(component.calculate, 'emit');
 
-  // Act: manually trigger input value & mark it as touched
   const inputEl = fixture.debugElement.query(By.css('input')).nativeElement;
   inputEl.value = '200';
   inputEl.dispatchEvent(new Event('input'));
-  inputEl.dispatchEvent(new Event('blur'));  // Marks it as touched
+  inputEl.dispatchEvent(new Event('blur'));  
   fixture.detectChanges();
   await fixture.whenStable();
 
-  // Button should now be enabled
+  
   const button = fixture.debugElement.query(By.css('button')).nativeElement;
   expect(button.disabled).toBeFalse();
-
-  // Click the button
   button.click();
 
-  // Assert
   expect(component.calculate.emit).toHaveBeenCalledWith({
     amount: 200,
     calculateInBackend: true,

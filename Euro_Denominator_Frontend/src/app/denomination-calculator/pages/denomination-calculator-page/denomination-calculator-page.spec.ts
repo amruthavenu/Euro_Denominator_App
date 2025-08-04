@@ -31,19 +31,20 @@ describe('DenominationCalculatorPage', () => {
 
 
   it('should call backend and set currentBreakdown', () => {
-    // Arrange
     component.amount = 123;
+     component.lastBreakdown = {
+      amount: 100,
+      denominationCounts: { "50": 2 }
+    };
     const mockResponse = {
       breakdown: { "100": 1, "20": 1, "2": 1, "1": 1 },
       differenceFromPrevious: { "100": 1 }
     };
     mockService.calculate.and.returnValue(of(mockResponse));
 
-    // Act
     component.calculateBreakdown();
 
-    // Assert ( not needed) - 
-    expect(mockService.calculate).toHaveBeenCalledWith(123);
+    expect(mockService.calculate).toHaveBeenCalledWith(123, null);
     expect(component.currentBreakdown?.denominationCounts["100"]).toBe(1);
     expect(component.diffs["100"]).toBe(1);
   });
