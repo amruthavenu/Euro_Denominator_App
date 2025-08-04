@@ -1,8 +1,8 @@
-<h3>Breakdown</h3>
+<h3>Breakdown of {{ currentBreakdownEuros.amount | number: '1.2-2' }} € </h3>
 <table>
   <thead>
     <tr>
-      <th>Denomination of {{ currentBreakdownEuros.amount | number: '1.2-2' }} €</th>
+      <th>Denomination </th>
       <th>Count</th>
     </tr>
   </thead>
@@ -16,7 +16,7 @@
 
 <!-- Show difference from previous -->
 <div *ngIf="lastBreakdown">
-  <h3>Difference from Previous</h3>
+  <h3>Difference from Previous {{ lastBreakdown.amount | number: '1.2-2' }} €</h3>
   <table>
     <thead>
       <tr>
