@@ -1,0 +1,94 @@
+package org.example.euro_denominator.service;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+import org.example.euro_denominator.model.DenominationResponse;
+import org.junit.jupiter.api.Test;
+
+import java.util.Map;
+
+import static org.assertj.core.api.Assertions.assertThat;
+
+class DenominationServiceTest {
+
+    private final DenominationService service = new DenominationService();
+
+    @Test
+    void testCalculateBreakdown_valid() {
+        double amount = 186.73;
+        Map<Integer, Integer> result = service.calculateBreakdown(amount);
+
+        assertThat(result.get(10000)).isEqualTo(1);
+        assertThat(result.get(5000)).isEqualTo(1);
+        assertThat(result.get(2000)).isEqualTo(1);
+        assertThat(result.get(1000)).isEqualTo(1);
+        assertThat(result.get(500)).isEqualTo(1);
+        assertThat(result.get(100)).isEqualTo(1);
+        assertThat(result.get(50)).isEqualTo(1);
+        assertThat(result.get(20)).isEqualTo(1);
+        assertThat(result.get(2)).isEqualTo(1);
+        assertThat(result.get(1)).isEqualTo(1);
+    }
+
+    @Test
+    void testCalculateBreakdown_zeroAmount() {
+        Map<Integer, Integer> result = service.calculateBreakdown(0.0);
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    void testCalculateBreakdown_inValidAmount() {
+        Map<Integer, Integer> result = service.calculateBreakdown(-12);
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    void testCalculateBreakdown_inValidAmount_DoubleMax() {
+        Map<Integer, Integer> result = service.calculateBreakdown(Double.MAX_VALUE);
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    void testCompareWithPrevious_whenPreviousIsNull_returnsNull() {
+        Map<Integer, Integer> current = Map.of(2000, 1);
+        Map<Integer, Integer> result = service.compareWithPrevious(current);
+        assertNull(result);
+    }
+
+    @Test
+    void testCompareWithPrevious_validComparison() {
+        Map<Integer, Integer> previous = Map.of(2000, 1, 1000, 2);
+        Map<Integer, Integer> current = Map.of(2000, 2, 500, 1);
+
+        // manually set previous
+        service.updatePrevious(previous, null);
+
+        Map<Integer, Integer> difference = service.compareWithPrevious(current);
+
+        assertEquals(3, difference.size());
+        assertEquals(1, difference.get(2000));  // 2 - 1
+        assertEquals(-2, difference.get(1000)); // 0 - 2
+        assertEquals(1, difference.get(500));   // 1 - 0
+    }
+
+    @Test
+    void testUpdatePrevious_setsBreakdownAndDifference() {
+        Map<Integer, Integer> current = Map.of(10000, 1, 2000, 2);
+        Map<Integer, Integer> difference = Map.of(10000, 1, 2000, 1);
+
+        DenominationResponse response = service.updatePrevious(current, difference);
+
+        assertEquals(current, response.getBreakdown());
+        assertEquals(difference, response.getDifferenceFromPrevious());
+
+        Map<Integer, Integer> newComparison = Map.of(10000, 1, 2000, 3);
+        Map<Integer, Integer> result = service.compareWithPrevious(newComparison);
+        assertEquals(1, result.get(2000));
+    }
+
+    @Test
+    void testCompareWithPrevious_CurrentBreakdownNull_throwsException() {
+        assertThrows(IllegalArgumentException.class, () -> service.compareWithPrevious(null));
+    }
+
+}

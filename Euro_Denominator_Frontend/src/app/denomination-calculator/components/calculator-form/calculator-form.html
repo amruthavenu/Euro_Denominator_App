@@ -1,0 +1,16 @@
+<div class="form-section">
+    <input type="number" [(ngModel)]="amount" name="amount" min="0.01" max="1000000000000" step="0.01" required
+        placeholder="Enter amount in €" #amountInput="ngModel" />
+
+    <div *ngIf="amountInput.invalid && amountInput.touched" class="error">
+        <div *ngIf="amountInput.errors?.['required']">*Amount is required.</div>
+        <div *ngIf="amountInput.errors?.['min']">Amount must be greater than 0.</div>
+        <div *ngIf="amountInput.errors?.['max']">Amount must be less than 1 trillion.</div>
+    </div>
+
+    <button (click)="onConvert()" [disabled]="amountInput.invalid">Convert</button>
+</div>
+
+<mat-slide-toggle [(ngModel)]="calculateInBackend">
+    Calculate in Backend
+</mat-slide-toggle>

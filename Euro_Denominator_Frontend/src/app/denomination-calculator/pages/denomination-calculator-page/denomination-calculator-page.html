@@ -1,0 +1,32 @@
+<!-- Header -->
+<header class="header">
+  <div class="left">💶 EuroBreakdown</div>
+</header>
+<div class="container">
+  <h2 class="title">💶 Euro Denomination Calculator</h2>
+
+<p class="description">
+  This Euro Denomination Calculator helps you calculate the total value of your cash by breaking down the amount into euro coins and banknotes.  
+  Simply enter the amount, and the calculator shows the optimal combination using the fewest bills and coins.  
+  You can also compare differences with your previous entry and switch between frontend and backend logic modes.  
+  (Coming soon: Option to save your previous data in your browser!)
+</p>
+ <!-- FORM component for the input amount-->
+ <app-calculator-form
+    [amount]="amount"
+    [calculateInBackend]="calculateInBackend"
+    (calculate)="handleCalculationRequest($event)">
+  </app-calculator-form>
+
+  <!--RESULTS component shows breakdown of the entered amount and difference with the previous amount -->
+  <app-breakdown-result
+    *ngIf="currentBreakdownEuros"
+    [currentBreakdownEuros]="currentBreakdownEuros"
+    [lastBreakdown]="lastBreakdown"
+    [diffs]="getBreakdownDiff()">
+  </app-breakdown-result>
+</div>
+
+<footer>
+  &copy; 2025 EuroBreakdown. All rights reserved.
+</footer>

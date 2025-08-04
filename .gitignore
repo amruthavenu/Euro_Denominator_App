@@ -1,0 +1,23 @@
+ 
+# === Java (Gradle) ===
+*.class
+*.jar
+*.war
+*.log
+*.iml
+.gradle
+/build
+/out
+.idea/
+
+# === Node/Angular ===
+node_modules/
+dist/
+.angular/
+
+# === OS & IDE Files ===
+.DS_Store
+Thumbs.db
+.vscode/
+*.swp
+*.swo
