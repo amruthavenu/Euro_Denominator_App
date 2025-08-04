@@ -21,7 +21,13 @@ export class DenominationCalculatorService {
    * @param amount Euro amount to calculate denomination for
    * @returns Observable<BackendResponse>
    */
-  calculate(amount: number): Observable<BackendResponse> {
-    return this.http.post<BackendResponse>(this.apiUrl, { amount });
+  calculate(amount: number, previousBreakdown?: Record<number, number> | null): Observable<BackendResponse> {
+  const payload: any = { amount };
+
+  if (previousBreakdown) {
+    payload.previousBreakdown = previousBreakdown;
   }
+
+  return this.http.post<BackendResponse>(this.apiUrl, payload);
+}
 }

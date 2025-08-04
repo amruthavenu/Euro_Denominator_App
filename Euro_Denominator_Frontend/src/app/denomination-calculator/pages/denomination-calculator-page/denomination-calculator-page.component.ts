@@ -52,7 +52,8 @@ export class DenominationCalculatorPageComponent {
     this.lastBreakdown = this.currentBreakdown;
     if (this.calculateInBackend) {
       //  Backend logic 
-      this.calculatorService.calculate(this.amount).subscribe({
+
+        this.calculatorService.calculate(this.amount, this.lastBreakdown?.denominationCounts ?? null).subscribe({
         next: (response) => {
 
           this.currentBreakdown = {

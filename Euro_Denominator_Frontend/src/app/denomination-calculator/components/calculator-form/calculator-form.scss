@@ -24,6 +24,12 @@ button:hover {
   background-color: #218838;
 }
 
+button:disabled {
+    background-color: light-dark(rgba(222, 222, 222, 0.3), rgba(19, 1, 1, 0.3));
+    color: light-dark(rgba(16, 16, 16, 0.3), rgba(255, 255, 255, 0.3));
+    border-color: light-dark(rgba(118, 118, 118, 0.3), rgba(195, 195, 195, 0.3));
+}
+
 label {
   display: flex;
   align-items: center;
