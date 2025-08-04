@@ -23,9 +23,6 @@ public class DenominationService {
             200, 100, 50, 20, 10, 5, 2, 1
     };
 
-
-    private Map<Integer, Integer> previousBreakdown = null;
-
     /**
      * Calculates the optimal denomination breakdown for a given amount in euros.
      * Converts the amount to cents and uses the least number of coins/bills.
@@ -56,22 +53,23 @@ public class DenominationService {
      * @return A map of denomination differences, or null if no previous breakdown exists.
      * @throws IllegalArgumentException if the current breakdown is null.
      */
-    public Map<Integer, Integer> compareWithPrevious(Map<Integer, Integer> current) {
+    public Map<Integer, Integer> compareWithPrevious(Map<Integer, Integer> current, Map<Integer, Integer> previous ) {
 
         if (current == null) {
             throw new IllegalArgumentException("Current Breakdown cannot be null");
         }
-        if (previousBreakdown == null) {
+        //previousBreakdown = previous;
+        if (previous == null) {
             return null;
         }
 
         Map<Integer, Integer> difference = new LinkedHashMap<>();
-        Set<Integer> allKeys = new TreeSet<>(); // Sorted for readability
+        Set<Integer> allKeys = new TreeSet<>();
         allKeys.addAll(current.keySet());
-        allKeys.addAll(previousBreakdown.keySet());
+        allKeys.addAll(previous.keySet());
 
         for (Integer denomination : allKeys) {
-            int prevCount = previousBreakdown.getOrDefault(denomination, 0);
+            int prevCount = previous.getOrDefault(denomination, 0);
             int currCount = current.getOrDefault(denomination, 0);
             int diff = currCount - prevCount;
             difference.put(denomination, diff);
@@ -80,22 +78,21 @@ public class DenominationService {
     }
 
     /**
-     * Updates the previous breakdown state with the current breakdown and returns a response object.
-     * Also sets the difference from the previous breakdown in the response.
+     * Creates response based on the current breakdown and and difference of denominations
+     * from the previous breakdown.
      *
      * @param current    The current denomination breakdown (in cents).
      * @param difference The calculated difference from the previous breakdown (may be null).
      * @return A response object containing the current breakdown and the difference.
      * @throws IllegalArgumentException if the current breakdown is null.
      */
-    public DenominationResponse updatePrevious(Map<Integer, Integer> current, Map<Integer, Integer> difference) {
+    public DenominationResponse createResponse(Map<Integer, Integer> current, Map<Integer, Integer> difference) {
         if (current == null) {
             throw new IllegalArgumentException("Current breakdown cannot be null.");
         }
         DenominationResponse response = new DenominationResponse();
         response.setBreakdown(current);
         response.setDifferenceFromPrevious(difference);
-        previousBreakdown = new HashMap<>(current);
         return response;
     }
 }

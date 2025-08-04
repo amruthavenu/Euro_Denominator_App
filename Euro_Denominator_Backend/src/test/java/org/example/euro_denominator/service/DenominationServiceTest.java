@@ -51,7 +51,7 @@ class DenominationServiceTest {
     @Test
     void testCompareWithPrevious_whenPreviousIsNull_returnsNull() {
         Map<Integer, Integer> current = Map.of(2000, 1);
-        Map<Integer, Integer> result = service.compareWithPrevious(current);
+        Map<Integer, Integer> result = service.compareWithPrevious(current, null);
         assertNull(result);
     }
 
@@ -61,9 +61,9 @@ class DenominationServiceTest {
         Map<Integer, Integer> current = Map.of(2000, 2, 500, 1);
 
         // manually set previous
-        service.updatePrevious(previous, null);
+        service.createResponse(previous, null);
 
-        Map<Integer, Integer> difference = service.compareWithPrevious(current);
+        Map<Integer, Integer> difference = service.compareWithPrevious(current,previous);
 
         assertEquals(3, difference.size());
         assertEquals(1, difference.get(2000));  // 2 - 1
@@ -76,19 +76,19 @@ class DenominationServiceTest {
         Map<Integer, Integer> current = Map.of(10000, 1, 2000, 2);
         Map<Integer, Integer> difference = Map.of(10000, 1, 2000, 1);
 
-        DenominationResponse response = service.updatePrevious(current, difference);
+        DenominationResponse response = service.createResponse(current, difference);
 
         assertEquals(current, response.getBreakdown());
         assertEquals(difference, response.getDifferenceFromPrevious());
 
         Map<Integer, Integer> newComparison = Map.of(10000, 1, 2000, 3);
-        Map<Integer, Integer> result = service.compareWithPrevious(newComparison);
+        Map<Integer, Integer> result = service.compareWithPrevious(newComparison, current);
         assertEquals(1, result.get(2000));
     }
 
     @Test
     void testCompareWithPrevious_CurrentBreakdownNull_throwsException() {
-        assertThrows(IllegalArgumentException.class, () -> service.compareWithPrevious(null));
+        assertThrows(IllegalArgumentException.class, () -> service.compareWithPrevious(null, null));
     }
 
 }

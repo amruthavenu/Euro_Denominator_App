@@ -37,12 +37,13 @@ public class DenominationController {
         if (request == null) {
             throw new IllegalArgumentException("Invalid request");
         }
+        Map<Integer, Integer> previous = request.getPreviousBreakdown();
         double amount = request.getAmount();
 
         try {
             Map<Integer, Integer> breakdown = denominationService.calculateBreakdown(amount);
-            Map<Integer, Integer> difference = denominationService.compareWithPrevious(breakdown);
-            return denominationService.updatePrevious(breakdown, difference);
+            Map<Integer, Integer> difference = denominationService.compareWithPrevious(breakdown, previous);
+            return denominationService.createResponse(breakdown, difference);
         } catch (Exception ex) {
             throw new RuntimeException("Failed to calculate denomination breakdown: " + ex.getMessage(), ex);
         }
