@@ -17,7 +17,7 @@ describe('BreakdownResult', () => {
 
      component.currentBreakdownEuros = {
       amount: 100,
-      denominationCounts: { 50: 1, 20: 2, 10: 1 }
+      denominationCounts: { 100: 1 }
     };
 
     component.lastBreakdown = {
@@ -33,13 +33,13 @@ describe('BreakdownResult', () => {
   });
    it('should render breakdown entries', () => {
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.textContent).toContain('50');
-    expect(compiled.textContent).toContain('2');
+    expect(compiled.textContent).toContain('100');
+    expect(compiled.textContent).toContain('1');
   });
 
   it('should return breakdown entries sorted in descending order', () => {
   component.currentBreakdownEuros = {
-    amount: 100,
+    amount: 31,
     denominationCounts: { 5.00: 1, 10.00: 2, 2.00: 3 }
   };
 

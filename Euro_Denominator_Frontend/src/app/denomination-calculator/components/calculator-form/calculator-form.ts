@@ -23,15 +23,15 @@ export class CalculatorForm {
    * The amount in euros entered by the user.
    * Bound via [(ngModel)] from the parent component.
    */
-  @Input() amount: number = 0;
+  amount: number = 0;
 
   /**
    * Flag to determine whether calculation should be done in the backend.
    * Bound via [(ngModel)] from the parent component.
    */
-  @Input() calculateInBackend: boolean = true;
+   calculateInBackend: boolean = true;
 
-  /**
+  /**  
    * Event emitter that sends the amount and calculation mode to the parent component.
    */
   @Output() calculate = new EventEmitter<{ amount: number; calculateInBackend: boolean }>();

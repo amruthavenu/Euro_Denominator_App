@@ -32,21 +32,21 @@ describe('DenominationCalculatorPage', () => {
 
   it('should call backend and set currentBreakdown', () => {
     component.amount = 123;
-     component.lastBreakdown = {
+    component.lastBreakdown = {
       amount: 100,
-      denominationCounts: { "50": 2 }
+      denominationCounts: { "100": 1 }
     };
     const mockResponse = {
-      breakdown: { "100": 1, "20": 1, "2": 1, "1": 1 },
-      differenceFromPrevious: { "100": 1 }
+      breakdown: { "10000": 1, "2000": 1, "200": 1, "100": 1 },
+      differenceFromPrevious: { "10000": 0 }
     };
     mockService.calculate.and.returnValue(of(mockResponse));
 
     component.calculateBreakdown();
 
     expect(mockService.calculate).toHaveBeenCalledWith(123, null);
-    expect(component.currentBreakdown?.denominationCounts["100"]).toBe(1);
-    expect(component.diffs["100"]).toBe(1);
+    expect(component.currentBreakdown?.denominationCounts["10000"]).toBe(1);
+    expect(component.diffs["10000"]).toBe(0);
   });
 
   it('should calculate frontend breakdown when backend mode is off', () => {
