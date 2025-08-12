@@ -32,8 +32,8 @@ class DenominationControllerTest {
     void shouldReturnBreakdownResponse() throws Exception {
         // Mocking expected behavior
         DenominationResponse mockResponse = new DenominationResponse();
-        mockResponse.setBreakdown(Map.of(2000, 1));
-        mockResponse.setDifferenceFromPrevious(Map.of(2000, 1));
+        mockResponse.setBreakdown(Map.of(2000, 1L));
+        mockResponse.setDifferenceFromPrevious(Map.of(2000, 1L));
 
         Mockito.when(denominationService.calculateBreakdown(20.0))
                 .thenReturn(mockResponse.getBreakdown());

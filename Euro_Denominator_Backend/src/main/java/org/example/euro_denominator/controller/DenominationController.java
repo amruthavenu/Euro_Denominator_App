@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -37,12 +38,12 @@ public class DenominationController {
         if (request == null) {
             throw new IllegalArgumentException("Invalid request");
         }
-        Map<Integer, Integer> previous = request.getPreviousBreakdown();
+        Map<Integer, Long> previous = request.getPreviousBreakdown();
         double amount = request.getAmount();
 
         try {
-            Map<Integer, Integer> breakdown = denominationService.calculateBreakdown(amount);
-            Map<Integer, Integer> difference = denominationService.compareWithPrevious(breakdown, previous);
+            Map<Integer, Long> breakdown = denominationService.calculateBreakdown(amount);
+            Map<Integer, Long> difference = denominationService.compareWithPrevious(breakdown, previous);
             return denominationService.createResponse(breakdown, difference);
         } catch (Exception ex) {
             throw new RuntimeException("Failed to calculate denomination breakdown: " + ex.getMessage(), ex);

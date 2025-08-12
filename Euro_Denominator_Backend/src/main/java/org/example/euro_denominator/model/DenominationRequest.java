@@ -1,5 +1,6 @@
 package org.example.euro_denominator.model;
 
+import jakarta.validation.constraints.DecimalMax;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotNull;
 
@@ -12,9 +13,10 @@ import java.util.Map;
 public class DenominationRequest {
     @NotNull(message = "Amount is required")
     @DecimalMin(value = "0", message = "Amount must be at least 0")
+    @DecimalMax(value = "1000000000000", message = "Amount must be less than 1 trillion")
     private double amount;
 
-    private Map<Integer, Integer> previousBreakdown;
+    private Map<Integer, Long> previousBreakdown;
 
     public double getAmount() {
         return amount;
@@ -24,11 +26,11 @@ public class DenominationRequest {
         this.amount = amount;
     }
 
-    public Map<Integer, Integer> getPreviousBreakdown() {
+    public Map<Integer, Long> getPreviousBreakdown() {
         return previousBreakdown;
     }
 
-    public void setPreviousBreakdown(Map<Integer, Integer> previousBreakdown) {
+    public void setPreviousBreakdown(Map<Integer, Long> previousBreakdown) {
         this.previousBreakdown = previousBreakdown;
     }
 }

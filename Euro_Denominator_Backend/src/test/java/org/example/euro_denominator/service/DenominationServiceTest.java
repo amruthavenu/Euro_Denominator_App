@@ -16,7 +16,7 @@ class DenominationServiceTest {
     @Test
     void testCalculateBreakdown_valid() {
         double amount = 186.73;
-        Map<Integer, Integer> result = service.calculateBreakdown(amount);
+        Map<Integer, Long> result = service.calculateBreakdown(amount);
 
         assertThat(result.get(10000)).isEqualTo(1);
         assertThat(result.get(5000)).isEqualTo(1);
@@ -32,38 +32,38 @@ class DenominationServiceTest {
 
     @Test
     void testCalculateBreakdown_zeroAmount() {
-        Map<Integer, Integer> result = service.calculateBreakdown(0.0);
+        Map<Integer, Long> result = service.calculateBreakdown(0.0);
         assertTrue(result.isEmpty());
     }
 
     @Test
     void testCalculateBreakdown_inValidAmount() {
-        Map<Integer, Integer> result = service.calculateBreakdown(-12);
+        Map<Integer, Long> result = service.calculateBreakdown(-12);
         assertTrue(result.isEmpty());
     }
 
     @Test
     void testCalculateBreakdown_inValidAmount_DoubleMax() {
-        Map<Integer, Integer> result = service.calculateBreakdown(Double.MAX_VALUE);
+        Map<Integer, Long> result = service.calculateBreakdown(Double.MAX_VALUE);
         assertTrue(result.isEmpty());
     }
 
     @Test
     void testCompareWithPrevious_whenPreviousIsNull_returnsNull() {
-        Map<Integer, Integer> current = Map.of(2000, 1);
-        Map<Integer, Integer> result = service.compareWithPrevious(current, null);
+        Map<Integer, Long> current = Map.of(2000, 1L);
+        Map<Integer, Long> result = service.compareWithPrevious(current, null);
         assertNull(result);
     }
 
     @Test
     void testCompareWithPrevious_validComparison() {
-        Map<Integer, Integer> previous = Map.of(2000, 1, 1000, 2);
-        Map<Integer, Integer> current = Map.of(2000, 2, 500, 1);
+        Map<Integer, Long> previous = Map.of(2000, 1L, 1000, 2L);
+        Map<Integer, Long> current = Map.of(2000, 2L, 500, 1L);
 
         // manually set previous
         service.createResponse(previous, null);
 
-        Map<Integer, Integer> difference = service.compareWithPrevious(current,previous);
+        Map<Integer, Long> difference = service.compareWithPrevious(current,previous);
 
         assertEquals(3, difference.size());
         assertEquals(1, difference.get(2000));  // 2 - 1
@@ -73,16 +73,16 @@ class DenominationServiceTest {
 
     @Test
     void testUpdatePrevious_setsBreakdownAndDifference() {
-        Map<Integer, Integer> current = Map.of(10000, 1, 2000, 2);
-        Map<Integer, Integer> difference = Map.of(10000, 1, 2000, 1);
+        Map<Integer, Long> current = Map.of(10000, 1L, 2000, 2L);
+        Map<Integer, Long> difference = Map.of(10000, 1L, 2000, 1L);
 
         DenominationResponse response = service.createResponse(current, difference);
 
         assertEquals(current, response.getBreakdown());
         assertEquals(difference, response.getDifferenceFromPrevious());
 
-        Map<Integer, Integer> newComparison = Map.of(10000, 1, 2000, 3);
-        Map<Integer, Integer> result = service.compareWithPrevious(newComparison, current);
+        Map<Integer, Long> newComparison = Map.of(10000, 1L, 2000, 3L);
+        Map<Integer, Long> result = service.compareWithPrevious(newComparison, current);
         assertEquals(1, result.get(2000));
     }
 
@@ -91,4 +91,9 @@ class DenominationServiceTest {
         assertThrows(IllegalArgumentException.class, () -> service.compareWithPrevious(null, null));
     }
 
+    @Test
+    void testCalculateBreakdown_oneTrillion() {
+        Map<Integer, Long> result = service.calculateBreakdown(1_000_000_000_000.00);
+        assertEquals(5_000_000_000L, result.get(20000));
+    }
 }

@@ -3,6 +3,8 @@ package org.example.euro_denominator.service;
 import org.example.euro_denominator.model.DenominationResponse;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.*;
 
 /**
@@ -19,7 +21,7 @@ public class DenominationService {
 
     // Available denominations in descending order
     private static final Integer[] DENOMINATIONS_IN_CENTS = {
-            50000, 20000, 10000, 5000, 2000, 1000, 500,
+            20000, 10000, 5000, 2000, 1000, 500,
             200, 100, 50, 20, 10, 5, 2, 1
     };
 
@@ -30,15 +32,22 @@ public class DenominationService {
      * @param amount The amount in euros to break down. Must be a positive, finite number.
      * @return A map representing the count of each denomination used (in cents).
      */
-    public Map<Integer, Integer> calculateBreakdown(double amount) {
-        int amountInCents = (int) Math.round(amount * 100);
-        Map<Integer, Integer> result = new LinkedHashMap<>(); // to maintain order
+    public Map<Integer, Long> calculateBreakdown(double amount) {
+        BigDecimal amountInCents = BigDecimal
+                .valueOf(amount)
+                .setScale(2, RoundingMode.HALF_UP)
+                .multiply(BigDecimal.valueOf(100));
+
+        Map<Integer, Long> result = new LinkedHashMap<>(); // to maintain order
 
         for (Integer denomination : DENOMINATIONS_IN_CENTS) {
-            int count = amountInCents / denomination;
-            if (count > 0) {
-                result.put(denomination, count);
-                amountInCents -= count * denomination;
+            BigDecimal denomBD = BigDecimal.valueOf(denomination);
+            BigDecimal[] divisionResult = amountInCents.divideAndRemainder(denomBD);
+
+            BigDecimal count = divisionResult[0];
+            if (count.compareTo(BigDecimal.ZERO) > 0) {
+                result.put(denomination, count.longValue());
+                amountInCents = divisionResult[1];
             }
         }
         return result;
@@ -53,7 +62,7 @@ public class DenominationService {
      * @return A map of denomination differences, or null if no previous breakdown exists.
      * @throws IllegalArgumentException if the current breakdown is null.
      */
-    public Map<Integer, Integer> compareWithPrevious(Map<Integer, Integer> current, Map<Integer, Integer> previous ) {
+    public Map<Integer, Long> compareWithPrevious(Map<Integer, Long> current, Map<Integer, Long> previous ) {
 
         if (current == null) {
             throw new IllegalArgumentException("Current Breakdown cannot be null");
@@ -63,15 +72,15 @@ public class DenominationService {
             return null;
         }
 
-        Map<Integer, Integer> difference = new LinkedHashMap<>();
+        Map<Integer, Long> difference = new LinkedHashMap<>();
         Set<Integer> allKeys = new TreeSet<>();
         allKeys.addAll(current.keySet());
         allKeys.addAll(previous.keySet());
 
         for (Integer denomination : allKeys) {
-            int prevCount = previous.getOrDefault(denomination, 0);
-            int currCount = current.getOrDefault(denomination, 0);
-            int diff = currCount - prevCount;
+            long prevCount = previous.getOrDefault(denomination, 0L);
+            long currCount = current.getOrDefault(denomination, 0L);
+            long diff = currCount - prevCount;
             difference.put(denomination, diff);
         }
         return difference;
@@ -86,7 +95,7 @@ public class DenominationService {
      * @return A response object containing the current breakdown and the difference.
      * @throws IllegalArgumentException if the current breakdown is null.
      */
-    public DenominationResponse createResponse(Map<Integer, Integer> current, Map<Integer, Integer> difference) {
+    public DenominationResponse createResponse(Map<Integer, Long> current, Map<Integer, Long> difference) {
         if (current == null) {
             throw new IllegalArgumentException("Current breakdown cannot be null.");
         }
